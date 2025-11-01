@@ -1,6 +1,6 @@
 {
   "buildCommand": "echo 'Frontend is static files, no build needed'",
-  "outputDirectory": ".",
+  "outputDirectory": "public",
   "public": true,
   "headers": [
     {
