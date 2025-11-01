@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // ✅ CORRECTION: Use the full backend URL for the teacher login endpoint.
-            const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://sahayakapp-k9rf.onrender.com';
+            const backendUrl = 'https://sahayakapp-k9rf.onrender.com';
             const response = await fetch(`${backendUrl}/api/auth/teacher/login`, { 
                 method: 'POST',
                 headers: {

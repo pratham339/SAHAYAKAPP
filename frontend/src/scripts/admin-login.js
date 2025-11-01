@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // ✅ Use the full backend URL for the admin login endpoint
-            const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://sahayakapp-k9rf.onrender.com';
+            const backendUrl = 'https://sahayakapp-k9rf.onrender.com';
             const response = await fetch(`${backendUrl}/api/auth/admin/login`, {
                 method: 'POST',
                 headers: {
