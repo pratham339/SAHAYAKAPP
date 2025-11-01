@@ -5,56 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard - Sahayak</title>
     <link rel="stylesheet" href="/style.css">
+    <style>
+      .dashboard-header { padding: 20px; border-bottom: 2px solid #ddd; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+      .content-container { max-width: 1200px; margin: 0 auto; }
+      .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+    </style>
 </head>
 <body>
-    <div id="navbar-placeholder"></div>
     <main class="content-container">
         <header class="dashboard-header">
              <div>
                 <h1>Teacher Dashboard</h1>
-                <p>Welcome, <span id="teacher-name">Teacher</span>!</p>
+                <p>Welcome, <strong id="teacher-name">Teacher</strong>!</p>
              </div>
-             <button id="logout-btn" class="btn secondary-btn">Logout</button>
+             <button onclick="logout()" class="btn" style="background-color: #e74c3c; height: fit-content;">🚪 Logout</button>
         </header>
 
-        <div class="dashboard-cards">
-            <div class="card">
-                <h2>Attendance</h2>
-                <p>Mark and view daily student attendance.</p>
-                <a href="attendance.html" class="btn primary-btn">Mark Attendance</a>
-            </div>
-
-            <div class="card">
-                <h2>Content Generation</h2>
-                <p>Create lesson summaries and questions from PDF notes.</p>
-                <a href="content-generation.html" class="btn primary-btn">Generate Content</a>
-            </div>
-        </div>
+        <section class="admin-section">
+          <h2>Available Features</h2>
+          <div class="button-grid">
+            <button onclick="alert('Feature coming soon!')" class="btn">🗓️ Mark Attendance</button>
+            <button onclick="alert('Feature coming soon!')" class="btn">✍️ Generate Content</button>
+            <button onclick="alert('Feature coming soon!')" class="btn">📋 View Syllabus</button>
+          </div>
+        </section>
     </main>
 
-    <script src="/scripts/auth-check.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Check authentication on page load
-        checkTeacherAuth();
-
-        // Display teacher name from localStorage
         const teacherData = JSON.parse(localStorage.getItem('teacherData') || '{}');
         document.getElementById('teacher-name').textContent = teacherData.name || 'Teacher';
-
-        // Find the logout button and add a click event listener
-        const logoutBtn = document.getElementById('logout-btn');
-        logoutBtn.addEventListener('click', () => {
-            // Clear the user's token and data from storage
-            localStorage.removeItem('token');
-            localStorage.removeItem('teacherData');
-
-            // ✅ Redirect to the homepage (index.html)
-            window.location.href = '/';
-        });
     });
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('teacherData');
+      window.location.href = '/pages/teacher-login.html';
+    }
     </script>
-    <script src="/scripts/navbar.js"></script>
-    <script src="/scripts/include-navbar.js"></script>
 </body>
 </html>
