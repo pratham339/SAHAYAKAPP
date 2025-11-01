@@ -1,5 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "echo Static files only",
-  "outputDirectory": "public"
+  "buildCommand": "echo Building static files",
+  "outputDirectory": "public",
+  "public": true,
+  "cleanUrls": false,
+  "trailingSlash": false
 }
