@@ -32,7 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('adminData', JSON.stringify(data.admin));
-                window.location.href = '/pages/admin-dashboard.html';
+                // Redirect to home which will show dashboard
+                window.location.href = '/';
             } else {
                 errorMessage.textContent = data.message || 'Admin login failed. Please try again.';
             }

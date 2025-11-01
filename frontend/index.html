@@ -5,16 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome - Sahayak</title>
     <link rel="stylesheet" href="/style.css">
+    <style>
+        .dashboard { max-width: 1200px; margin: 20px auto; padding: 20px; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .logout-btn { background-color: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .logout-btn:hover { background-color: #c0392b; }
+        .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+    </style>
 </head>
-<body class="home-page">
+<body>
 
-    <div class="welcome-container">
+    <div id="login-page" class="welcome-container">
         <h1>Welcome to Sahayak</h1>
         <div class="button-group">
             <a href="/pages/teacher-login.html" class="btn">Log In as Teacher</a>
             <a href="/pages/admin-login.html" class="btn btn-secondary">Log In as Admin</a>
         </div>
     </div>
+
+    <div id="dashboard-page" style="display: none;" class="dashboard">
+        <div class="dashboard-header">
+            <h1>Dashboard</h1>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+        <div id="user-info" style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            <p>Welcome, <strong id="user-name">User</strong>!</p>
+            <p style="font-size: 12px; color: #666;">Email: <span id="user-email">—</span></p>
+        </div>
+        <div class="button-grid">
+            <button class="btn" onclick="alert('Feature coming soon!')">📚 My Classes</button>
+            <button class="btn" onclick="alert('Feature coming soon!')">🗓️ Attendance</button>
+            <button class="btn" onclick="alert('Feature coming soon!')">✍️ Content</button>
+            <button class="btn" onclick="alert('Feature coming soon!')">📋 Syllabus</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            const adminData = localStorage.getItem('adminData');
+            const teacherData = localStorage.getItem('teacherData');
+
+            if (token && (adminData || teacherData)) {
+                // Show dashboard
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('dashboard-page').style.display = 'block';
+
+                if (adminData) {
+                    const admin = JSON.parse(adminData);
+                    document.getElementById('user-name').textContent = admin.name || 'Admin';
+                    document.getElementById('user-email').textContent = admin.email || '—';
+                } else if (teacherData) {
+                    const teacher = JSON.parse(teacherData);
+                    document.getElementById('user-name').textContent = teacher.name || 'Teacher';
+                    document.getElementById('user-email').textContent = teacher.email || '—';
+                }
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('adminData');
+            localStorage.removeItem('teacherData');
+            location.reload();
+        }
+    </script>
 
 </body>
 </html>

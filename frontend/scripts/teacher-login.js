@@ -32,7 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('teacherData', JSON.stringify(data.teacher));
-                window.location.href = '/pages/teacher-dashboard.html';
+                // Redirect to home which will show dashboard
+                window.location.href = '/';
             } else {
                 errorMessage.textContent = data.message || 'Login failed. Please try again.';
             }
