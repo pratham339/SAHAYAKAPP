@@ -1,11 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "echo 'Static files only'",
-  "outputDirectory": "public",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
+  "buildCommand": "echo Static files only",
+  "outputDirectory": "public"
 }
