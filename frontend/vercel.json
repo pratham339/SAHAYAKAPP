@@ -1,0 +1,25 @@
+{
+  "buildCommand": "echo 'Frontend is static files, no build needed'",
+  "outputDirectory": ".",
+  "public": true,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, must-revalidate"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "env": {
+    "VITE_BACKEND_URL": "@backend_url"
+  }
+}
