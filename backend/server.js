@@ -17,6 +17,33 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// CORS Middleware - Allow requests from Vercel frontend
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'https://sahayakapp3.vercel.app',
+    'https://sahayakapp.vercel.app',
+    'https://sahayakapp32.vercel.app',
+    'https://sahayakapp121.vercel.app'
+  ];
+  
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  
+  next();
+});
+
 // Middleware setup
 // Serve compiled/dev static from both src and public so pages can be reached
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'src')));
