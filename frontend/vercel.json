@@ -1,6 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "echo 'Static files only'",
+  "buildCommand": "echo 'Static files'",
   "cleanUrls": false,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "crons": []
 }
