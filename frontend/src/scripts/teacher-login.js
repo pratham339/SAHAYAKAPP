@@ -12,8 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('password').value;
 
         try {
-            // ✅ CORRECTION: Use the full, correct relative path to the teacher login endpoint.
-            const response = await fetch('/api/auth/teacher/login', { 
+            // ✅ CORRECTION: Use the full backend URL for the teacher login endpoint.
+            const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://sahayakapp-k9rf.onrender.com';
+            const response = await fetch(`${backendUrl}/api/auth/teacher/login`, { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

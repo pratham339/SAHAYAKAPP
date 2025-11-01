@@ -11,8 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('password').value;
 
         try {
-            // ✅ Corrected the API endpoint URL
-            const response = await fetch('/api/auth/admin/login', {
+            // ✅ Use the full backend URL for the admin login endpoint
+            const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://sahayakapp-k9rf.onrender.com';
+            const response = await fetch(`${backendUrl}/api/auth/admin/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
