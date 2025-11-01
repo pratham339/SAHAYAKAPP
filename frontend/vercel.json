@@ -1,7 +1,25 @@
 {
-  "buildCommand": "echo 'Frontend is static files, no build needed'",
-  "outputDirectory": "public",
-  "public": true,
+  "version": 2,
+  "builds": [
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/public/$1"
+    },
+    {
+      "src": "/pages/(.*)",
+      "dest": "/public/pages/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/public/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -11,12 +29,6 @@
           "value": "public, max-age=3600, must-revalidate"
         }
       ]
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
     }
   ]
 }
