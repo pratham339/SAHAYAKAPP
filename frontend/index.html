@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome - Sahayak</title>
+    <title>Sahayak - Login & Dashboard</title>
     <link rel="stylesheet" href="/style.css">
     <style>
+        .hidden { display: none !important; }
         .dashboard { max-width: 1200px; margin: 20px auto; padding: 20px; }
         .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .logout-btn { background-color: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
@@ -15,15 +16,32 @@
 </head>
 <body>
 
+    <!-- LOGIN PAGE -->
     <div id="login-page" class="welcome-container">
         <h1>Welcome to Sahayak</h1>
         <div class="button-group">
-            <a href="/pages/teacher-login.html" class="btn">Log In as Teacher</a>
-            <a href="/pages/admin-login.html" class="btn btn-secondary">Log In as Admin</a>
+            <button class="btn" onclick="showLoginForm('teacher')">Log In as Teacher</button>
+            <button class="btn btn-secondary" onclick="showLoginForm('admin')">Log In as Admin</button>
         </div>
+
+        <form id="login-form" class="form-card" style="display: none; margin-top: 30px; max-width: 400px; margin-left: auto; margin-right: auto;">
+            <h2 id="login-title">Login</h2>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn">Log In</button>
+            <button type="button" class="btn" onclick="showLoginForm(null)" style="background-color: #95a5a6; margin-top: 10px;">Cancel</button>
+            <p id="error-message" class="error-message" style="margin-top: 10px; color: #e74c3c;"></p>
+        </form>
     </div>
 
-    <div id="dashboard-page" style="display: none;" class="dashboard">
+    <!-- DASHBOARD PAGE -->
+    <div id="dashboard-page" class="hidden dashboard">
         <div class="dashboard-header">
             <h1>Dashboard</h1>
             <button class="logout-btn" onclick="logout()">Logout</button>
@@ -32,6 +50,7 @@
             <p>Welcome, <strong id="user-name">User</strong>!</p>
             <p style="font-size: 12px; color: #666;">Email: <span id="user-email">—</span></p>
         </div>
+        <h2>Available Features</h2>
         <div class="button-grid">
             <button class="btn" onclick="alert('Feature coming soon!')">📚 My Classes</button>
             <button class="btn" onclick="alert('Feature coming soon!')">🗓️ Attendance</button>
@@ -41,27 +60,73 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('token');
+        let currentRole = null;
+
+        function showLoginForm(role) {
+            currentRole = role;
+            if (role) {
+                document.getElementById('login-form').style.display = 'block';
+                document.getElementById('login-title').textContent = role === 'teacher' ? 'Teacher Login' : 'Admin Login';
+            } else {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('error-message').textContent = '';
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMsg = document.getElementById('error-message');
+
+            try {
+                const endpoint = currentRole === 'teacher' ? '/api/auth/teacher/login' : '/api/auth/admin/login';
+                const backendUrl = 'https://sahayakapp-k9rf.onrender.com';
+                
+                console.log('📧 Logging in as:', currentRole, email);
+                const response = await fetch(backendUrl + endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                console.log('📥 Response:', response.status, data);
+
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    if (currentRole === 'teacher') {
+                        localStorage.setItem('teacherData', JSON.stringify(data.teacher));
+                    } else {
+                        localStorage.setItem('adminData', JSON.stringify(data.admin));
+                    }
+                    showDashboard();
+                } else {
+                    errorMsg.textContent = data.message || 'Login failed';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorMsg.textContent = 'Could not connect to server';
+            }
+        });
+
+        function showDashboard() {
+            document.getElementById('login-page').classList.add('hidden');
+            document.getElementById('dashboard-page').classList.remove('hidden');
+
             const adminData = localStorage.getItem('adminData');
             const teacherData = localStorage.getItem('teacherData');
 
-            if (token && (adminData || teacherData)) {
-                // Show dashboard
-                document.getElementById('login-page').style.display = 'none';
-                document.getElementById('dashboard-page').style.display = 'block';
-
-                if (adminData) {
-                    const admin = JSON.parse(adminData);
-                    document.getElementById('user-name').textContent = admin.name || 'Admin';
-                    document.getElementById('user-email').textContent = admin.email || '—';
-                } else if (teacherData) {
-                    const teacher = JSON.parse(teacherData);
-                    document.getElementById('user-name').textContent = teacher.name || 'Teacher';
-                    document.getElementById('user-email').textContent = teacher.email || '—';
-                }
+            if (adminData) {
+                const admin = JSON.parse(adminData);
+                document.getElementById('user-name').textContent = admin.name || 'Admin';
+                document.getElementById('user-email').textContent = admin.email || '—';
+            } else if (teacherData) {
+                const teacher = JSON.parse(teacherData);
+                document.getElementById('user-name').textContent = teacher.name || 'Teacher';
+                document.getElementById('user-email').textContent = teacher.email || '—';
             }
-        });
+        }
 
         function logout() {
             localStorage.removeItem('token');
@@ -69,6 +134,14 @@
             localStorage.removeItem('teacherData');
             location.reload();
         }
+
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (token && (localStorage.getItem('adminData') || localStorage.getItem('teacherData'))) {
+                showDashboard();
+            }
+        });
     </script>
 
 </body>
