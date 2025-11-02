@@ -1,24 +1,15 @@
 {
   "version": 2,
-  "buildCommand": "echo 'Static site'",
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "routes": [
+  "buildCommand": "echo 'Static files'",
+  "cleanUrls": false,
+  "rewrites": [
     {
-      "src": "/style.css",
-      "dest": "/style.css"
+      "source": "/(.*\\..*)",
+      "destination": "/$1"
     },
     {
-      "src": "/pages/(.*)",
-      "dest": "/pages/$1"
-    },
-    {
-      "src": "/scripts/(.*)",
-      "dest": "/scripts/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
