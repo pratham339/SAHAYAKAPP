@@ -1,4 +1,5 @@
 // backend/server.js
+// Auto-deploy test - November 2, 2025
 import 'dotenv/config'; // ESM way to load .env variables
 import express from 'express';
 import contentRoutes from './routes/contentRoutes.js';
