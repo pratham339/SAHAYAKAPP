@@ -5,6 +5,8 @@ import contentRoutes from './routes/contentRoutes.js';
 import teacherRoutes from './routes/teacherRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import verifyRoutes from './routes/verifyRoutes.js';
+import syllabusRoutes from './routes/syllabusRoutes.js';
+import submissionRoutes from './routes/submissionRoutes.js';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -17,37 +19,14 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS Middleware - Allow requests from Vercel frontend
-app.use((req, res, next) => {
-  const allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'https://sahayakapp3.vercel.app',
-    'https://sahayakapp.vercel.app',
-    'https://sahayakapp32.vercel.app',
-    'https://sahayakapp121.vercel.app'
-  ];
-  
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-  
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-  
-  next();
-});
-
 // Middleware setup
 // Serve compiled/dev static from both src and public so pages can be reached
-app.use(express.static(path.join(__dirname, '..', 'frontend', 'src')));
+app.use(express.static(path.join(__dirname, '..', 'frontend', 'src','scripts')));
+app.use(express.static(path.join(__dirname, '..', 'frontend', 'src',)));
+
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
+app.use('/scripts', express.static(path.join(__dirname, '..', 'frontend', 'src', 'scripts')));
+
 app.use(express.json());
 
 // Content generation routes
@@ -58,6 +37,17 @@ app.use('/api/auth', teacherRoutes);
 app.use('/api/auth', adminRoutes);
 app.use('/api/auth', verifyRoutes);
 app.use("/api/reports", reportRoutes);
+
+// Teacher routes - ensure it's before any other routes using teacherRoutes
+app.use('/api/teacher', teacherRoutes);
+// Auth routes that also use teacherRoutes should come after
+app.use('/api/auth', teacherRoutes);
+
+// Syllabus Tracker routes
+app.use('/api/syllabus', syllabusRoutes);
+app.use('/api/submissions', submissionRoutes);
+
+
 
 // Teacher upload routes (under /api for consistency)
 app.use('/api', adminRoutes);
@@ -81,8 +71,9 @@ app.get('/pages/:page', (req, res) => {
     const pagePath = path.join(__dirname, '..', 'frontend', 'src', 'pages', req.params.page);
     if (fs.existsSync(pagePath)) {
         // Check if the page requires authentication
-        const teacherPages = ['teacher-dashboard.html', 'attendance.html', 'content-generation.html'];
-        const adminPages = ['admin-dashboard.html'];
+        // ✅ ADDED worksheet-submissions.html here
+        const teacherPages = ['teacher-dashboard.html', 'attendance.html', 'content-generation.html', 'syllabus-detail.html', 'worksheet-submissions.html'];
+        const adminPages = ['admin-dashboard.html', 'admin-add-teacher.html', 'admin-assign-teacher.html', 'admin-upload-students.html', 'admin-view-students.html', 'admin-view-teachers.html'];
 
         if (teacherPages.includes(req.params.page) || adminPages.includes(req.params.page)) {
             // Apply authentication middleware for protected pages

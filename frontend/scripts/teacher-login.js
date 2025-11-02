@@ -1,45 +1,42 @@
+// scripts/login.js
+
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     const errorMessage = document.getElementById('error-message');
 
-    if (!loginForm) return; // safety
-
     loginForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
+        event.preventDefault(); 
         errorMessage.textContent = '';
 
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
-
-        console.log('📧 Email (trimmed):', email);
-        console.log('🔐 Password length:', password.length);
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
         try {
-            const backendUrl = 'https://sahayakapp-k9rf.onrender.com';
-            const payload = { email, password };
-            console.log('📤 Sending payload:', payload);
-            
-            const response = await fetch(`${backendUrl}/api/auth/teacher/login`, {
+            // ✅ CORRECTION: Use the full, correct relative path to the teacher login endpoint.
+            const response = await fetch('/api/auth/teacher/login', { 
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
             });
 
-            console.log('📥 Response status:', response.status);
             const data = await response.json();
-            console.log('📋 Response data:', data);
 
-            if (response.ok) {
+            if (response.ok) { // Check for a 2xx status code is more reliable
+                // If login is successful, store the token and teacher data
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('teacherData', JSON.stringify(data.teacher));
-                // Redirect to home which will show dashboard
-                window.location.href = '/';
+
+                // Redirect to the teacher dashboard page
+                window.location.href = '/pages/teacher-dashboard.html';
             } else {
+                // If login fails, display the error message from the server
                 errorMessage.textContent = data.message || 'Login failed. Please try again.';
             }
         } catch (error) {
             console.error('Login request failed:', error);
-            errorMessage.textContent = 'Could not connect to the server. Please try again later.';
+            errorMessage.textContent = 'Could not connect to the server. Please check your connection.';
         }
     });
 });

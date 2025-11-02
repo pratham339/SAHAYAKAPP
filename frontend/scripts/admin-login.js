@@ -2,44 +2,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminLoginForm = document.getElementById('admin-login-form');
     const errorMessage = document.getElementById('error-message');
 
-    if (!adminLoginForm) return; // safety
-
     adminLoginForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
+        event.preventDefault(); // Prevent the form from reloading the page
         errorMessage.textContent = '';
 
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
-
-        console.log('📧 Email (trimmed):', email);
-        console.log('🔐 Password length:', password.length);
+        // ✅ Get value from the 'email' input field
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
         try {
-            const backendUrl = 'https://sahayakapp-k9rf.onrender.com';
-            const payload = { email, password };
-            console.log('📤 Sending payload:', payload);
-            
-            const response = await fetch(`${backendUrl}/api/auth/admin/login`, {
+            // ✅ Corrected the API endpoint URL
+            const response = await fetch('/api/auth/admin/login', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
             });
 
-            console.log('📥 Response status:', response.status);
             const data = await response.json();
-            console.log('📋 Response data:', data);
 
             if (response.ok) {
+                // Store the token and admin data upon successful login
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('adminData', JSON.stringify(data.admin));
-                // Redirect to home which will show dashboard
-                window.location.href = '/';
+                
+                // Redirect to the admin dashboard
+                window.location.href = '/pages/admin-dashboard.html';
             } else {
+                // Display the error message from the server
                 errorMessage.textContent = data.message || 'Admin login failed. Please try again.';
             }
         } catch (error) {
             console.error('Admin login request failed:', error);
-            errorMessage.textContent = 'Could not connect to the server. Please try again later.';
+            errorMessage.textContent = 'Could not connect to the server. Please check your connection.';
         }
     });
 });
