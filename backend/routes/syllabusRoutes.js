@@ -1,7 +1,7 @@
 // backend/routes/syllabusRoutes.js
 import express from 'express';
 import { verifyToken } from '../middleware/authMiddleware.js';
-import { getTrackers, getTrackerDetails, markChapterComplete, getWorksheet } from '../controllers/syllabuscontroller.js';
+import { getTrackers, getTrackerDetails, markChapterComplete, getWorksheet } from '../controllers/syllabusController.js';
 
 const router = express.Router();
 
