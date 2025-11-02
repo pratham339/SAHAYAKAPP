@@ -1,15 +1,22 @@
 {
   "version": 2,
-  "buildCommand": "echo 'Static files'",
   "cleanUrls": false,
-  "rewrites": [
+  "routes": [
     {
-      "source": "/(.*\\..*)",
-      "destination": "/$1"
+      "src": "/style.css",
+      "dest": "/style.css"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/pages/(.*)",
+      "dest": "/pages/$1"
+    },
+    {
+      "src": "/scripts/(.*)",
+      "dest": "/scripts/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
