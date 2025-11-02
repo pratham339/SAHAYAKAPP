@@ -6,7 +6,21 @@
     <title>Sahayak - Login & Dashboard</title>
     <link rel="stylesheet" href="/style.css">
     <style>
+        body.login-mode { padding-top: 0 !important; }
         .hidden { display: none !important; }
+        .login-container { height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .welcome-container { text-align: center; }
+        .button-group { margin: 20px 0; }
+        .btn { padding: 12px 24px; margin: 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .btn { background-color: #0078ff; color: white; }
+        .btn:hover { background-color: #0056cc; }
+        .btn-secondary { background-color: #22c55e; }
+        .btn-secondary:hover { background-color: #16a34a; }
+        .form-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 400px; margin: 30px auto; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .error-message { color: #e74c3c; }
         .dashboard { max-width: 1200px; margin: 20px auto; padding: 20px; }
         .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .logout-btn { background-color: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
@@ -14,30 +28,32 @@
         .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
     </style>
 </head>
-<body>
+<body class="login-mode home-page">
 
     <!-- LOGIN PAGE -->
-    <div id="login-page" class="welcome-container">
-        <h1>Welcome to Sahayak</h1>
-        <div class="button-group">
-            <button class="btn" onclick="showLoginForm('teacher')">Log In as Teacher</button>
-            <button class="btn btn-secondary" onclick="showLoginForm('admin')">Log In as Admin</button>
-        </div>
+    <div id="login-page" class="login-container">
+        <div class="welcome-container">
+            <h1>Welcome to Sahayak</h1>
+            <div class="button-group">
+                <button class="btn" onclick="showLoginForm('teacher')">Log In as Teacher</button>
+                <button class="btn btn-secondary" onclick="showLoginForm('admin')">Log In as Admin</button>
+            </div>
 
-        <form id="login-form" class="form-card" style="display: none; margin-top: 30px; max-width: 400px; margin-left: auto; margin-right: auto;">
-            <h2 id="login-title">Login</h2>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn">Log In</button>
-            <button type="button" class="btn" onclick="showLoginForm(null)" style="background-color: #95a5a6; margin-top: 10px;">Cancel</button>
-            <p id="error-message" class="error-message" style="margin-top: 10px; color: #e74c3c;"></p>
-        </form>
+            <form id="login-form" class="form-card" style="display: none;">
+                <h2 id="login-title">Login</h2>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Log In</button>
+                <button type="button" class="btn" onclick="showLoginForm(null)" style="background-color: #95a5a6; margin-top: 10px; width: 100%;">Cancel</button>
+                <p id="error-message" class="error-message" style="margin-top: 10px;"></p>
+            </form>
+        </div>
     </div>
 
     <!-- DASHBOARD PAGE -->
@@ -61,15 +77,21 @@
 
     <script>
         let currentRole = null;
+        const BACKEND_URL = 'https://sahayakapp-k9rf.onrender.com';
 
         function showLoginForm(role) {
             currentRole = role;
+            const form = document.getElementById('login-form');
+            const title = document.getElementById('login-title');
+            const errorMsg = document.getElementById('error-message');
+            
             if (role) {
-                document.getElementById('login-form').style.display = 'block';
-                document.getElementById('login-title').textContent = role === 'teacher' ? 'Teacher Login' : 'Admin Login';
+                form.style.display = 'block';
+                title.textContent = role === 'teacher' ? 'Teacher Login' : 'Admin Login';
+                errorMsg.textContent = '';
             } else {
-                document.getElementById('login-form').style.display = 'none';
-                document.getElementById('error-message').textContent = '';
+                form.style.display = 'none';
+                errorMsg.textContent = '';
             }
         }
 
@@ -79,21 +101,27 @@
             const password = document.getElementById('password').value.trim();
             const errorMsg = document.getElementById('error-message');
 
+            console.log('📧 Logging in as:', currentRole);
+            console.log('📤 Email:', email);
+
             try {
                 const endpoint = currentRole === 'teacher' ? '/api/auth/teacher/login' : '/api/auth/admin/login';
-                const backendUrl = 'https://sahayakapp-k9rf.onrender.com';
+                const url = BACKEND_URL + endpoint;
                 
-                console.log('📧 Logging in as:', currentRole, email);
-                const response = await fetch(backendUrl + endpoint, {
+                console.log('� URL:', url);
+                
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
 
+                console.log('📥 Response status:', response.status);
                 const data = await response.json();
-                console.log('📥 Response:', response.status, data);
+                console.log('� Response data:', data);
 
                 if (response.ok) {
+                    console.log('✅ Login successful!');
                     localStorage.setItem('token', data.token);
                     if (currentRole === 'teacher') {
                         localStorage.setItem('teacherData', JSON.stringify(data.teacher));
@@ -102,15 +130,17 @@
                     }
                     showDashboard();
                 } else {
-                    errorMsg.textContent = data.message || 'Login failed';
+                    errorMsg.textContent = data.message || 'Login failed. Please try again.';
+                    console.error('❌ Login failed:', data.message);
                 }
             } catch (error) {
-                console.error('Login error:', error);
-                errorMsg.textContent = 'Could not connect to server';
+                console.error('❌ Error:', error);
+                errorMsg.textContent = 'Could not connect to the server. Please try again later.';
             }
         });
 
         function showDashboard() {
+            console.log('🎯 Showing dashboard...');
             document.getElementById('login-page').classList.add('hidden');
             document.getElementById('dashboard-page').classList.remove('hidden');
 
@@ -129,16 +159,19 @@
         }
 
         function logout() {
+            console.log('🚪 Logging out...');
             localStorage.removeItem('token');
             localStorage.removeItem('adminData');
             localStorage.removeItem('teacherData');
             location.reload();
         }
 
-        // Check if already logged in
+        // Check if already logged in on page load
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('📄 Page loaded');
             const token = localStorage.getItem('token');
             if (token && (localStorage.getItem('adminData') || localStorage.getItem('teacherData'))) {
+                console.log('✅ User already logged in, showing dashboard');
                 showDashboard();
             }
         });
