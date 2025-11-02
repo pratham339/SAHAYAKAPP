@@ -1,7 +1,13 @@
 {
   "version": 2,
-  "buildCommand": "echo 'Static files'",
+  "buildCommand": "echo 'Static files only'",
+  "public": ".",
   "cleanUrls": false,
   "trailingSlash": false,
-  "crons": []
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
