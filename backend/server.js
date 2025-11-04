@@ -29,7 +29,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware setup
 // Serve static files from pages, scripts, public directories
-app.use(express.static(path.join(frontendPath, 'pages')));
+app.use('/pages', express.static(path.join(frontendPath, 'pages')));
 app.use(express.static(path.join(frontendPath, 'scripts')));
 app.use(express.static(path.join(frontendPath, 'public')));
 app.use('/scripts', express.static(path.join(frontendPath, 'scripts')));
