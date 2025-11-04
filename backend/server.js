@@ -28,12 +28,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware setup
-// Serve compiled/dev static from both src and public so pages can be reached
-app.use(express.static(path.join(frontendPath, 'src','scripts')));
-app.use(express.static(path.join(frontendPath, 'src')));
-
+// Serve static files from pages, scripts, public directories
+app.use(express.static(path.join(frontendPath, 'pages')));
+app.use(express.static(path.join(frontendPath, 'scripts')));
 app.use(express.static(path.join(frontendPath, 'public')));
-app.use('/scripts', express.static(path.join(frontendPath, 'src', 'scripts')));
+app.use('/scripts', express.static(path.join(frontendPath, 'scripts')));
 
 app.use(express.json());
 
@@ -68,7 +67,7 @@ app.get('/', (req, res) => {
     if (fs.existsSync(publicIndex)) {
         return res.sendFile(publicIndex);
     }
-    res.sendFile(path.join(frontendPath, 'src', 'pages', 'content-generation.html'));
+    res.sendFile(path.join(frontendPath, 'pages', 'content-generation.html'));
 });
 
 // Import authentication middleware
@@ -76,10 +75,9 @@ import { verifyToken } from './middleware/authMiddleware.js';
 
 // Handle direct page requests for HTML files in the pages directory with authentication
 app.get('/pages/:page', (req, res) => {
-    const pagePath = path.join(frontendPath, 'src', 'pages', req.params.page);
+    const pagePath = path.join(frontendPath, 'pages', req.params.page);
     if (fs.existsSync(pagePath)) {
         // Check if the page requires authentication
-        // ✅ ADDED worksheet-submissions.html here
         const teacherPages = ['teacher-dashboard.html', 'attendance.html', 'content-generation.html', 'syllabus-detail.html', 'worksheet-submissions.html'];
         const adminPages = ['admin-dashboard.html', 'admin-add-teacher.html', 'admin-assign-teacher.html', 'admin-upload-students.html', 'admin-view-students.html', 'admin-view-teachers.html'];
 
