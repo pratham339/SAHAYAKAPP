@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "cleanUrls": false,
   "routes": [
     {
       "src": "/style.css",
